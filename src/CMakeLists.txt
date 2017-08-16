@@ -71,7 +71,7 @@ include_directories(${BCLSProj_BINARY_DIR})
 
 ADD_LIBRARY(bcls ${LIB_TYPE} ${bcls_SRCS} ${bcls_HDRS})
 #TARGET_LINK_LIBRARIES(bcls )
-
+LibraryProperties( ${PROJECT_NAME} ${EXE_DEBUG_EXTENSION} )
 set_target_properties (bcls PROPERTIES
   FOLDER bcls
 )

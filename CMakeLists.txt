@@ -65,8 +65,7 @@ include (${CMP_SOURCE_DIR}/cmpCMakeMacros.cmake )
 include (${CMP_SOURCE_DIR}/cmpProject.cmake)
 
 
-# set(EXE_DEBUG_EXTENSION "_debug")
-set(EXE_DEBUG_EXTENSION "")
+set(EXE_DEBUG_EXTENSION "_debug")
 
 
  # On mac systems, we likely have to link against the vecLib framework

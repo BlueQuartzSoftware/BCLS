@@ -36,6 +36,7 @@
 #endif
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "bcls.h"
 #include "bclib.h"
