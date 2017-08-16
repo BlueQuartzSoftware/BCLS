@@ -83,6 +83,10 @@ ADD_LIBRARY(bcls ${LIB_TYPE} ${bcls_SRCS} ${bcls_HDRS})
 if(MKL_FOUND)
   TARGET_LINK_LIBRARIES(bcls ${MKL_LIBRARIES})
 endif()
+if(APPLE)
+  TARGET_LINK_LIBRARIES(bcls ${LAPACK_LIB})
+endif()
+
 
 LibraryProperties( ${PROJECT_NAME} ${EXE_DEBUG_EXTENSION} )
 set_target_properties (bcls PROPERTIES

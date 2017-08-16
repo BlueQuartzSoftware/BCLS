@@ -38,11 +38,9 @@
 #include "bccgls.h"
 #include "bclsqr.h"
 
-
 #ifdef __APPLE__
   #include <Accelerate/Accelerate.h>
-#endif
-#if bcls_HAVE_INTEL_MKL
+#elif bcls_HAVE_INTEL_MKL
   #include <mkl_cblas.h>
 #else
   #include "cblas.h"
