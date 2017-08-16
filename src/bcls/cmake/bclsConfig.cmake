@@ -1,4 +1,4 @@
-include("${CMAKE_CURRENT_LIST_DIR}/bclsLibTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/bclsTargets.cmake")
 
 set(bcls_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../../include")
 set(bcls_LIB_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../../lib;${CMAKE_CURRENT_LIST_DIR}/../../../bin")
