@@ -88,7 +88,10 @@ set_target_properties (bcls PROPERTIES
   )
 #endif()
 
-install(FILES ${bcls_HDRS}
+install(FILES ${bcls_HDRS} 
+              ${bcls_BINARY_DIR}/${CMP_TOP_HEADER_FILE}
+              ${bcls_BINARY_DIR}/${CMP_CONFIGURATION_FILE_NAME}
+              ${bcls_BINARY_DIR}/${CMP_TYPES_FILE_NAME}
   DESTINATION include/bcls
   COMPONENT Applications
   )
