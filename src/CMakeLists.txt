@@ -38,12 +38,11 @@ set(bcls_HDRS
   ${bcls_SOURCE_DIR}/bcls/bcsolver.h
   ${bcls_SOURCE_DIR}/bcls/bctimer.h
   ${bcls_SOURCE_DIR}/bcls/bcversion.h
-  ${bcls_SOURCE_DIR}/bcls/cblas.h
   ${bcls_SOURCE_DIR}/bcls/lsqr.h
+  ${bcls_SOURCE_DIR}/bcls/BCLSLibDLLExport.h
 )
 
 set(bcls_SRCS
-  ${bcls_SOURCE_DIR}/bcls/bccblas.c
   ${bcls_SOURCE_DIR}/bcls/bccgls.c
   ${bcls_SOURCE_DIR}/bcls/bcdebug.c
   ${bcls_SOURCE_DIR}/bcls/bclib.c
@@ -55,6 +54,17 @@ set(bcls_SRCS
   ${bcls_SOURCE_DIR}/bcls/lsqr.c
 )
 
+if(NOT APPLE AND NOT MKL_FOUND)
+  set(bcls_HDRS
+      ${bcls_HDRS}
+      ${bcls_SOURCE_DIR}/bcls/cblas.h
+  )
+
+  set(bcls_SRCS
+    ${bcls_SRCS}
+    ${bcls_SOURCE_DIR}/bcls/bccblas.c
+  )
+endif()
 
 set(install_dir "bin")
 set(lib_install_dir "lib")
@@ -70,7 +80,10 @@ include_directories(${BCLSProj_SOURCE_DIR}/src)
 include_directories(${BCLSProj_BINARY_DIR})
 
 ADD_LIBRARY(bcls ${LIB_TYPE} ${bcls_SRCS} ${bcls_HDRS})
-#TARGET_LINK_LIBRARIES(bcls )
+if(MKL_FOUND)
+  TARGET_LINK_LIBRARIES(bcls ${MKL_LIBRARIES})
+endif()
+
 LibraryProperties( ${PROJECT_NAME} ${EXE_DEBUG_EXTENSION} )
 set_target_properties (bcls PROPERTIES
   FOLDER bcls

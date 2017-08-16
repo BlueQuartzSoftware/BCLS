@@ -6,7 +6,9 @@
 #define _bcls_h_
 
 /* Define to 1 if BCLSLib was built as a dynamic library */
-#cmakedefine BCLSLib_BUILT_AS_DYNAMIC_LIB @BCLSLib_BUILT_AS_DYNAMIC_LIB@
+#cmakedefine bcls_BUILT_AS_DYNAMIC_LIB @bcls_BUILT_AS_DYNAMIC_LIB@
+
+#cmakedefine bcls_HAVE_INTEL_MKL @bcls_HAVE_INTEL_MKL@
 
 
 /* Defines the type of Release that is being built */
@@ -58,6 +60,5 @@
 
 /* Version number of package */
 #define BCLS_VERSION "@BCLSLib_VERSION_MAJOR@.@BCLSLib_VERSION_MINOR@"
-
 
 #endif

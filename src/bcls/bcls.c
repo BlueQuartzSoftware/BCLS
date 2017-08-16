@@ -28,12 +28,8 @@
   \file
   BCLS user-callable library routines.
 */
+#include "bcls.h"
 
-#ifdef __APPLE__
-  #include <Accelerate/Accelerate.h>
-#else
-  #include <cblas.h>
-#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <float.h>
@@ -41,10 +37,18 @@
 #include <assert.h>
 #include <setjmp.h>
 
-#include "bcls.h"
 #include "bclib.h"
 #include "bcsolver.h"
 #include "bcversion.h"
+
+#ifdef __APPLE__
+  #include <Accelerate/Accelerate.h>
+#endif
+#if bcls_HAVE_INTEL_MKL
+  #include <mkl_cblas.h>
+#else
+  #include "cblas.h"
+#endif
 
 /*!
 

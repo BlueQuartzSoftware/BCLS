@@ -28,21 +28,26 @@
    \file
    Interface to LSQR routine.  Used to compute a Newton step.
 */
+#include "bclsqr.h"
 
-#ifdef __APPLE__
-  #include <Accelerate/Accelerate.h>
-#else
-  #include <cblas.h>
-#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 
-#include "bcls.h"
-#include "bclib.h"
-#include "bclsqr.h"
-#include "lsqr.h"
 
+
+#ifdef __APPLE__
+  #include <Accelerate/Accelerate.h>
+#endif
+#if bcls_HAVE_INTEL_MKL
+  #include <mkl_cblas.h>
+#else
+  #include "cblas.h"
+#endif
+
+#include "lsqr.h"
+#include "bclib.h"
 /*!
 
   \brief Mat-vec routine called by LSQR.

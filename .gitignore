@@ -24,3 +24,4 @@ Support/Scripts/GMT/gmt.history
 .ctags
 .vscode
 /ExternalProjects
+/Release/

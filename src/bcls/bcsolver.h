@@ -32,14 +32,27 @@
 #ifndef _BCLSSOLVER_H
 #define _BCLSSOLVER_H
 
-#include "bcls.h"
+#include "bcls/bclslib.h"
+#include "bcls/bcls.h"
+
+
+
+/* Prevent C++ programs from name mangling these definitions. */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // The actual BCLS solver.
-void
-bcls_solver( BCLS *ls, int m, int n, double *bNorm,
+bcls_EXPORT void bcls_solver( BCLS *ls, int m, int n, double *bNorm,
 	     double x[], double b[], double c[],
 	     double bl[], double bu[],
 	     double r[], double g[], double dx[], double dxFree[],
 	     int ix[], double aBreak[], int iBreak[], double anorm[] );
+
+
+          
+#ifdef __cplusplus
+}
+#endif
 
 #endif

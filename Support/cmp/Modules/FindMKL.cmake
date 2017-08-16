@@ -20,6 +20,7 @@
 # OPEN - Open MPI library
 # SGI - SGI MPT Library
 
+message(STATUS "Finding MKL...")
 set(MKL_ARCH_DIR "ia32")
 if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
     set(MKL_ARCH_DIR "intel64")
@@ -39,14 +40,6 @@ set(MKL_POSSIBLE_LOCATIONS
     $ENV{MKLDIR}
     /opt/intel/mkl
     /opt/intel/cmkl
-    /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
-    "C:/Program Files (x86)/Intel/ComposerXE-2011/mkl"
-    "C:/Program Files (x86)/Intel/Composer XE 2013/mkl"
-    "C:/Program Files/Intel/MKL/*/"
-    "C:/Program Files/Intel/ComposerXE-2011/mkl"
-    "C:/Program Files/Intel/Composer XE 2013/mkl"
-    "C:/Program Files (x86)/Intel/Composer XE 2015/mkl/"
-    "C:/Program Files/Intel/Composer XE 2015/mkl/"
     "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2016/windows/mkl"
     "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2017/windows/mkl"
 )
@@ -63,18 +56,20 @@ foreach (i ${MKL_POSSIBLE_LOCATIONS})
         break()
     endif()
 endforeach()
+
+#   Does This work at all ?
+find_path(MKL_ROOT_DIR NAMES include/mkl_cblas.h include/blas.f90 
+                       PATHS ${MKL_POSSIBLE_LOCATIONS})
 message(STATUS "MKL_ROOT_DIR: ${MKL_ROOT_DIR}")
 message(STATUS "MKL_ARCH_DIR: ${MKL_ARCH_DIR}")
-#   Does This work at all ?
-find_path(MKL_ROOT_DIR NAMES include/mkl_cblas.h include/blas.f90 PATHS ${MKL_POSSIBLE_LOCATIONS})
 
 IF (NOT MKL_ROOT_DIR)
   MESSAGE(WARNING "Could not find MKL: disabling it")
   set(USE_MKL FALSE)
 endif()
-
+message(STATUS "USE_MKL: ${USE_MKL}")
 if (USE_MKL)
-    find_path(MKL_INCLUDE_DIR NAMES mkl_cblas.h blas.f90
+    find_path(MKL_INCLUDE_DIR NAMES mkl_cblas.h blas.h
             PATHS ${MKL_ROOT_DIR}/include ${INCLUDE_INSTALL_DIR})
 
     message(STATUS "MKL_INCLUDE_DIR: ${MKL_INCLUDE_DIR}")
@@ -84,7 +79,13 @@ if (USE_MKL)
                 NO_DEFAULT_PATH)
     message(STATUS "MKL_FFTW_INCLUDE_DIR: ${MKL_FFTW_INCLUDE_DIR}")
     if (WIN32)
-        set(MKL_LIB_SEARCHPATH $ENV{ICC_LIB_DIR} $ENV{MKL_LIB_DIR} "${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}" "${MKL_ROOT_DIR}/../compiler" "${MKL_ROOT_DIR}/../compiler/lib/${MKL_ARCH_DIR}")
+        set(MKL_LIB_SEARCHPATH $ENV{ICC_LIB_DIR} 
+                                $ENV{MKL_LIB_DIR} 
+                                "${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}" 
+                                "${MKL_ROOT_DIR}/../compiler" 
+                                "${MKL_ROOT_DIR}/../compiler/lib/${MKL_ARCH_DIR}"
+                                "${MKL_ROOT_DIR}/../tbb/lib/${MKL_ARCH_DIR}/vc_mt"
+                                )
         
         if (MKL_INCLUDE_DIR MATCHES "10.")
             set(MKL_LIBS mkl_solver mkl_core mkl_intel_c mkl_intel_s mkl_intel_thread libguide mkl_lapack95 mkl_blas95)
@@ -110,7 +111,17 @@ if (USE_MKL)
             endif()
         elseif(MKL_ROOT_DIR MATCHES "2017") # With Intel 2017 it would seem that MKL_INCLUDE_DIR does not have the year in it.
             if(CMAKE_CL_64)
-                SET(MKL_LIBS mkl_intel_lp64 mkl_core mkl_intel_thread mkl_lapack95_lp64 mkl_blas95_lp64 )
+                SET(MKL_LIBS    # mkl_blas95_lp64
+                                mkl_core 
+                                mkl_intel_lp64 
+                                # mkl_intel_thread 
+                                # mkl_lapack95_lp64
+                                # mkl_rt
+                                # mkl_sequential
+                                mkl_tbb_thread 
+                                tbb
+                                tbbmalloc
+                                 )
             else()
                 SET(MKL_LIBS mkl_intel_c mkl_core mkl_intel_thread mkl_lapack95 mkl_blas95 )
             endif()
@@ -126,6 +137,7 @@ if (USE_MKL)
             find_library(${LIB}_PATH ${LIB} PATHS ${MKL_LIB_SEARCHPATH} ENV LIBRARY_PATH)
             if (${LIB}_PATH)
                 set(MKL_LIBRARIES ${MKL_LIBRARIES} ${${LIB}_PATH})
+                message(STATUS "MKL Library ${LIB}_PATH: ${${LIB}_PATH}")
             else()
                 message(FATAL_ERROR "Could not find ${LIB}: disabling MKL")
                 BREAK()

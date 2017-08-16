@@ -8,6 +8,8 @@
    This file is a "line-by-line" translation of Michael Saunders's F77
    version to ISO C.
 */
+#include "lsqr.h"
+
 
 #include <stdlib.h>
 #include <string.h>
@@ -17,9 +19,13 @@
 
 #ifdef __APPLE__
   #include <Accelerate/Accelerate.h>
-#else
-  #include <cblas.h>
 #endif
+#if bcls_HAVE_INTEL_MKL
+  #include <mkl_cblas.h>
+#else
+  #include "cblas.h"
+#endif
+
 
 #define ZERO   0.0
 #define ONE    1.0

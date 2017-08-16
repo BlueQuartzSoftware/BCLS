@@ -28,21 +28,27 @@
    \file
    The main algorithm for the BCLS solver.
 */
+#include "bcsolver.h"
 
-#ifdef __APPLE__
-  #include <Accelerate/Accelerate.h>
-#else
-  #include <cblas.h>
-#endif
+
 #include <math.h>
 #include <assert.h>
 #include <string.h>
 
-#include "bcls.h"
-#include "bclib.h"
 #include "bccgls.h"
 #include "bclsqr.h"
-#include "bcsolver.h"
+
+
+#ifdef __APPLE__
+  #include <Accelerate/Accelerate.h>
+#endif
+#if bcls_HAVE_INTEL_MKL
+  #include <mkl_cblas.h>
+#else
+  #include "cblas.h"
+#endif
+
+#include "bclib.h"
 
 // =====================================================================
 // Private (static) function declarations.

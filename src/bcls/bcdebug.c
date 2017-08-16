@@ -29,6 +29,8 @@
    Debugging routines.  Only linked into library during "make debug".
 */
 
+#include "bcls/bclslib.h"
+
 #include "bclib.h"
 
 unsigned long long int hashd(double x)

@@ -28,6 +28,8 @@
    \file
    Helper routines for BCLS.
 */
+#include "bclib.h"
+
 
 #include <math.h>
 #include <stdarg.h>
@@ -38,7 +40,7 @@
 #include <float.h>
 #include <setjmp.h>
 
-#include "bclib.h"
+
 
 /*!
 

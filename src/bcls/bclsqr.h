@@ -32,9 +32,23 @@
 #ifndef _BCLSLSQR_H
 #define _BCLSLSQR_H
 
+#include "bcls/bclslib.h"
+#include "bcls/bcls.h"
+
+/* Prevent C++ programs from name mangling these definitions. */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 int
 bcls_newton_step_lsqr( BCLS *ls, int m, int nFree, int ix[], double damp,
 		       int itnLim, double tol, double dxFree[], double x[],
 		       double c[], double r[], int *itns, double *opt );
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

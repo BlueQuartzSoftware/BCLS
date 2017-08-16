@@ -37,6 +37,9 @@
 
 #define OFFSET(N, incX) ((incX) > 0 ?  0 : ((N) - 1) * (-(incX)))
 
+
+
+
 enum CBLAS_ORDER    {CblasRowMajor=101, CblasColMajor=102};
 enum CBLAS_TRANSPOSE {CblasNoTrans=111, CblasTrans=112, CblasConjTrans=113};
 

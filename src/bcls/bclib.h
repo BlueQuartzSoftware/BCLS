@@ -28,7 +28,8 @@
 #ifndef _BCLSLIB_H
 #define _BCLSLIB_H
 
-#include "bcls.h"
+#include "bcls/bclslib.h"
+#include "bcls/bcls.h"
 
 #define PRINT1(...)  bcls_print( ls, 1, __VA_ARGS__ )
 #define PRINT2(...)  bcls_print( ls, 2, __VA_ARGS__ )
@@ -71,7 +72,7 @@ void bcls_project_step( int n, double s[], double step, double x[],
                         double dx[], double bl[], double bu[] );
 
 // Examine and print something about the problem's bounds.
-int bcls_examine_bnds( BCLS *ls, int n, double bl[], double bu[] );
+int bcls_examine_bnds( BCLS *ls, const int n, double bl[], double bu[] );
 
 // Examine and print something about the column scales.
 void bcls_examine_column_scales( BCLS *ls, double anorm[] );

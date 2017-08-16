@@ -30,20 +30,25 @@
   This file implements conjugate gradients for the normal equations
   (CGLS).
 */
+#include "bccgls.h"
 
-#ifdef __APPLE__
-  #include <Accelerate/Accelerate.h>
-#else
-  #include <cblas.h>
-#endif
 #include <string.h>
 #include <assert.h>
 #include <math.h>
 #include <float.h>
 
-#include "bcls.h"
+
+
+#ifdef __APPLE__
+  #include <Accelerate/Accelerate.h>
+#endif
+#if bcls_HAVE_INTEL_MKL
+  #include <mkl_cblas.h>
+#else
+  #include "cblas.h"
+#endif
+
 #include "bclib.h"
-#include "bccgls.h"
 
 /*!
 

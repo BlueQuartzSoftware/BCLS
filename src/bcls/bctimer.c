@@ -28,12 +28,10 @@
    \file
    Timer functions.
 */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <assert.h>
 #include "bctimer.h"
+
+#include <assert.h>
+
 
 /*!
   \brief Start and stop the various stopwatches.

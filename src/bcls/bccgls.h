@@ -32,9 +32,24 @@
 #ifndef _BCLSCGLS_H
 #define _BCLSCGLS_H
 
-int
-bcls_newton_step_cgls( BCLS *ls, int m, int nFree, int ix[], double damp,
+#include "bcls/bclslib.h"
+#include "bcls.h"
+
+/* Prevent C++ programs from name mangling these definitions. */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+bcls_EXPORT int bcls_newton_step_cgls( BCLS *ls, int m, int nFree, int ix[], double damp,
 		       int itnLim, double tol, double dxFree[], double x[],
 		       double c[], double r[], int *itns, double *opt );
+
+
+/* Prevent C++ programs from name mangling these definitions. */
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

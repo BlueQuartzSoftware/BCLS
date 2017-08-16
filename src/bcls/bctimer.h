@@ -32,9 +32,7 @@
 #ifndef _BCLSTIMER_H
 #define _BCLSTIMER_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "bcls/bclslib.h"
 
 #ifdef HAVE_GETRUSAGE
 #include <sys/time.h>
