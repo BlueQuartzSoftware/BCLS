@@ -40,11 +40,13 @@ extern "C" {
 
 #include <stdio.h>
 #include <setjmp.h>
+
+#include "bcls/bclslib.h"    
 #include "bctimer.h"
 
 /* The BCLS objects define everything about a problem. */
 typedef struct BCLS BCLS;
-struct BCLS {
+BCLSLib_EXPORT struct BCLS {
 
     /*!\brief Transit pointer passed (untouched) to the routine print_hook. */
     void *print_info;
@@ -202,48 +204,48 @@ struct BCLS {
 };
 
 /* Create a new BCLS problem. */
-BCLS *
+BCLSLib_EXPORT BCLS *
 bcls_create_prob( int mmax, int nmax );
 
 /* Initialize  a new BCLS problem. */
-void
+BCLSLib_EXPORT void
 bcls_init_prob( BCLS *ls );
 
 /* Free a BCLS problem. */
-int
+BCLSLib_EXPORT int
 bcls_free_prob( BCLS *ls );
 
 /* Return an exit message. */
-char *
+BCLSLib_EXPORT char *
 bcls_exit_msg( int flag );
 
 /* Driver for the BCLS solver. */
-int
+BCLSLib_EXPORT int
 bcls_solve_prob( BCLS *ls );
 
 /* Install a user-defined print-hook routine. */
-void
+BCLSLib_EXPORT void
 bcls_set_print_hook( BCLS *ls, void *info,
                      int (*hook)(void *info, char *msg) );
 
 /* Install a user-defined print-hook routine. */
-void
+BCLSLib_EXPORT void
 bcls_set_fault_hook( BCLS *ls, void *info,
                      int (*hook)(void *info, char *msg) );
 
 /* Install a user-defined preconditioning routine. */
-void
+BCLSLib_EXPORT void
 bcls_set_usolve( BCLS *ls,
                  int (*Usolve)( int mode, int m, int n, int nix,
                                 int ix[], double v[], double w[],
                                 void *UsrWrk ) );
 
 /* Give BCLS access to a set of column norms of A. */
-void
+BCLSLib_EXPORT void
 bcls_set_anorm( BCLS *ls, double anorm[] );
 
 /* Compute column norms of A. */
-int
+BCLSLib_EXPORT int
 bcls_compute_anorm( BCLS *ls, int n, int m,
                     int (*Aprod)
                     ( int mode, int m, int n, int nix,
@@ -252,7 +254,7 @@ bcls_compute_anorm( BCLS *ls, int n, int m,
                     double anorm[] );
 
 /* Set the problem data. */
-void
+BCLSLib_EXPORT void
 bcls_set_problem_data( 
      BCLS  *ls,    /* A BCLS problem */
      int    m,     /* No. of problem rows */

@@ -16,7 +16,7 @@
 #include <math.h>
 
 #ifdef __APPLE__
-  #include <vecLib/vecLib.h>
+  #include <Accelerate/Accelerate.h>
 #else
   #include <cblas.h>
 #endif
@@ -571,18 +571,18 @@ void lsqr(
 
     if (nout != NULL) {
         if ( damped ) 
-            fprintf(nout, fmt_1300);
+            fprintf(nout, "%s", fmt_1300);
         else
-            fprintf(nout, fmt_1200);
+            fprintf(nout, "%s", fmt_1200);
 
         test1  = ONE;
         test2  = alpha / beta;
         
         if ( extra ) 
-            fprintf(nout, fmt_1400);
+            fprintf(nout, "%s", fmt_1400);
 
         fprintf(nout, fmt_1550, itn, x[0], rnorm, test1, test2);
-        fprintf(nout, fmt_1600);
+        fprintf(nout, "%s", fmt_1600);
     }
 
 
@@ -771,7 +771,7 @@ void lsqr(
             fprintf(nout, fmt_1500,
                     itn, x[0], rnorm, test1, test2, anorm, acond);
         }
-        if (itn % 10 == 0) fprintf(nout, fmt_1600);
+        if (itn % 10 == 0) fprintf(nout, "%s", fmt_1600);
 
 //      ------------------------------------------------------------------
 //      Stop if appropriate.

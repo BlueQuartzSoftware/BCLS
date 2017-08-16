@@ -32,7 +32,7 @@
 */
 
 #ifdef __APPLE__
-  #include <vecLib/vecLib.h>
+  #include <Accelerate/Accelerate.h>
 #else
   #include <cblas.h>
 #endif

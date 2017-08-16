@@ -29,14 +29,10 @@
    Record the version and latest compliation of the BCLS library.
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#else
-#define PACKAGE_VERSION "NN"
-#endif
-#include "bcversion.h"
 
-static char *version = PACKAGE_VERSION;
+#include "bcversion.h"
+#include "bcls/bclslib.h"
+static char *version = BCLS_PACKAGE_VERSION;
 static char *last_compilation = __DATE__ " " __TIME__;
 
 /*!
