@@ -42,6 +42,7 @@ set(MKL_POSSIBLE_LOCATIONS
     /opt/intel/cmkl
     "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2016/windows/mkl"
     "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2017/windows/mkl"
+    "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2018/windows/mkl"
 )
 
 foreach (i ${MKL_POSSIBLE_LOCATIONS})
@@ -87,23 +88,7 @@ if (USE_MKL)
                                 "${MKL_ROOT_DIR}/../tbb/lib/${MKL_ARCH_DIR}/vc_mt"
                                 )
         
-        if (MKL_INCLUDE_DIR MATCHES "10.")
-            set(MKL_LIBS mkl_solver mkl_core mkl_intel_c mkl_intel_s mkl_intel_thread libguide mkl_lapack95 mkl_blas95)
-            if (CMAKE_CL_64)
-                set(MKL_LIBS mkl_solver_lp64 mkl_core mkl_intel_lp64 mkl_intel_thread libguide mkl_lapack95_lp64 mkl_blas95_lp64)
-            endif()
-        elseif(MKL_INCLUDE_DIR MATCHES "2013") # version 11 ...
-            set(MKL_LIBS mkl_core mkl_intel_c mkl_intel_s mkl_intel_thread libiomp5md mkl_lapack95 mkl_blas95)
-            if (CMAKE_CL_64)
-                set(MKL_LIBS mkl_core mkl_intel_lp64 mkl_intel_thread libiomp5md mkl_lapack95_lp64 mkl_blas95_lp64)
-            endif()
-        elseif(MKL_INCLUDE_DIR MATCHES "2015")
-            if(CMAKE_CL_64)
-                SET(MKL_LIBS mkl_intel_lp64 mkl_core mkl_intel_thread mkl_lapack95_lp64 mkl_blas95_lp64 )
-            else()
-                SET(MKL_LIBS mkl_intel_c mkl_core mkl_intel_thread mkl_lapack95 mkl_blas95 )
-            endif()
-        elseif(MKL_INCLUDE_DIR MATCHES "2016")
+        if(MKL_INCLUDE_DIR MATCHES "2016")
             if(CMAKE_CL_64)
                 SET(MKL_LIBS mkl_intel_lp64 mkl_core mkl_intel_thread mkl_lapack95_lp64 mkl_blas95_lp64 )
             else()
@@ -125,12 +110,24 @@ if (USE_MKL)
             else()
                 SET(MKL_LIBS mkl_intel_c mkl_core mkl_intel_thread mkl_lapack95 mkl_blas95 )
             endif()
-        else() # old MKL 9
-            set(MKL_LIBS mkl_solver mkl_c libguide mkl_lapack mkl_ia32)
-        endif()
-
-        if (MKL_INCLUDE_DIR MATCHES "10.3")
-            set(MKL_LIBS ${MKL_LIBS} libiomp5md)
+        elseif(MKL_ROOT_DIR MATCHES "2018") # With Intel 2018 it would seem that MKL_INCLUDE_DIR does not have the year in it.
+            if(CMAKE_CL_64)
+                SET(MKL_LIBS    # mkl_blas95_lp64
+                                mkl_core 
+                                mkl_intel_lp64 
+                                # mkl_intel_thread 
+                                # mkl_lapack95_lp64
+                                # mkl_rt
+                                # mkl_sequential
+                                mkl_tbb_thread 
+                                tbb
+                                tbbmalloc
+                                 )
+            else()
+                SET(MKL_LIBS mkl_intel_c mkl_core mkl_intel_thread mkl_lapack95 mkl_blas95 )
+            endif()
+        else()
+            message(FATAL_ERROR "Intel MKL Version not found or not supported")
         endif()
         
         foreach (LIB ${MKL_LIBS})
