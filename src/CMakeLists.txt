@@ -76,8 +76,6 @@ elseif(APPLE)
   set(lib_install_dir "lib")
 endif()
 
-include_directories(${BCLSProj_SOURCE_DIR}/src)
-include_directories(${BCLSProj_BINARY_DIR})
 
 ADD_LIBRARY(bcls ${LIB_TYPE} ${bcls_SRCS} ${bcls_HDRS})
 if(MKL_FOUND)
@@ -87,10 +85,17 @@ if(APPLE)
   TARGET_LINK_LIBRARIES(bcls ${LAPACK_LIB})
 endif()
 
+target_include_directories(bcls 
+                          PUBLIC 
+                            ${MKL_INCLUDE_DIR}
+                          PRIVATE
+                            ${BCLSProj_SOURCE_DIR}/src
+                            ${BCLSProj_BINARY_DIR}
+                              )
 
 LibraryProperties( ${PROJECT_NAME} ${EXE_DEBUG_EXTENSION} )
-set_target_properties (bcls PROPERTIES
-  FOLDER bcls
+  set_target_properties (bcls PROPERTIES
+    FOLDER bcls
 )
 
 
