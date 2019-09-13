@@ -4,7 +4,7 @@ if(${CMAKE_MAJOR_VERSION} STREQUAL "3")
   # cmake ignore that policy
   cmake_policy(SET CMP0048 NEW)
   # CMake 3.0 introduces some OS X RPath policies
-  cmake_policy(SET CMP0042 OLD)
+  cmake_policy(SET CMP0042 NEW)
 endif()
 
 cmake_minimum_required (VERSION 3.8.0)
@@ -67,19 +67,37 @@ include (${CMP_SOURCE_DIR}/cmpProject.cmake)
 
 set(EXE_DEBUG_EXTENSION "_debug")
 
-
- # On mac systems, we likely have to link against the vecLib framework
-if(APPLE)
-  find_library(LAPACK_LIB Accelerate)
-  include_directories("-FvecLib")
-elseif(WIN32)
-  set(USE_MKL "ON")
-  find_package(MKL)
+option (BCLS_USE_MKL "Use MKL for BLAS/LAPACK functions" OFF)
+#------------------------------------------------------------------------------
+# Find the Intel Math Kernel Library (MKL) which has BLAS/LAPACK functions
+# 
+if (BCLS_USE_MKL)
+  # Define the interface layers and link type for MKL
+  set(MKL_Link_Type Static)
+  set(MKL_Interface_Layer 64)
+  set(MKL_ThreadingLayer Sequential)
+  set(MKL_OpenMP_Library iomp5)
+  set(MKL_F95Interface BLAS95 LAPACK95)
+  
+  find_package(MKL REQUIRED)
   if(MKL_FOUND)
-    set(bcls_HAVE_INTEL_MKL 1)
+    set(bcls_HAVE_INTEL_MKL 1) # This needs to be defined for the C Preprocessor macro
+  else()
+    message(FATAL_ERROR "Use of Intel Math Kernel Library (MKL) has been requested but not found.")
   endif()
-else()
-  message(STATUS "Linus users should install CBLAS from their package manager")
+
+endif()
+
+#------------------------------------------------------------------------------
+# Find the system BLAS/LAPACK functions
+# 
+if (NOT BCLS_USE_MKL)
+  if(APPLE)
+    find_library(LAPACK_LIB Accelerate)
+    include_directories("-FvecLib")
+  else()
+    message(STATUS "Linux users should install CBLAS from their package manager")
+  endif()
 endif()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/ ${PROJECT_BINARY_DIR}/bcls)

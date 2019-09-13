@@ -81,9 +81,9 @@ ADD_LIBRARY(bcls ${LIB_TYPE} ${bcls_SRCS} ${bcls_HDRS})
 if(MKL_FOUND)
   TARGET_LINK_LIBRARIES(bcls ${MKL_LIBRARIES})
 endif()
-if(APPLE)
-  TARGET_LINK_LIBRARIES(bcls ${LAPACK_LIB})
-endif()
+# if(APPLE)
+#   TARGET_LINK_LIBRARIES(bcls ${LAPACK_LIB})
+# endif()
 
 target_include_directories(bcls 
                           PUBLIC 
