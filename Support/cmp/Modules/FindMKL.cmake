@@ -87,10 +87,15 @@ if(NOT "${MKL_DIR}" STREQUAL "")
 endif()
 # message(STATUS "MKL_INCLUDE_SEARCH_DIRS: ${MKL_INCLUDE_SEARCH_DIRS}")  
 
+#-------------------------------------------------------------------------------
+# Find the C/C++ header version of MKL
 find_path(MKL_INCLUDE_DIR 
-        NAMES mkl.h mkl.fi
+        NAMES mkl.h
         PATHS ${MKL_INCLUDE_SEARCH_DIRS}
 )
+if(NOT MKL_INCLUDE_DIR)
+    message(FATAL_ERROR "mkl.h was not found. Is the C/C++ version of MKL installed? Looked in:\n   ${MKL_INCLUDE_SEARCH_DIRS} ")
+endif()
 
 
 #-------------------------------------------------------------------------------
