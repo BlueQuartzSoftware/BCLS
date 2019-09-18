@@ -74,7 +74,7 @@ option (BCLS_USE_MKL "Use MKL for BLAS/LAPACK functions" OFF)
 if (BCLS_USE_MKL)
   # Define the interface layers and link type for MKL
   set(MKL_Link_Type Static)
-  set(MKL_Interface_Layer 64)
+  set(MKL_Interface_Layer 32)
   set(MKL_ThreadingLayer Sequential)
   set(MKL_OpenMP_Library iomp5)
   set(MKL_F95Interface BLAS95 LAPACK95)
