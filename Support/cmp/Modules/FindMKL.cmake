@@ -125,7 +125,7 @@ find_path(FFTW3_INCLUDE_DIR
 # Generate the directories that will get searched for the MKL and support libs
 get_filename_component(MKL_LIB_DIR ${MKL_INCLUDE_DIR} DIRECTORY)
 set(MKL_LIB_DIR "${MKL_LIB_DIR}/lib")
-
+set(MKL_LIB_DIRS "${MKL_LIB_DIR}")
 if(NOT APPLE)
     set(MKL_LIB_DIRS "${MKL_LIB_DIR}/${MKL_ARCH_DIR}")
     if(NOT "${IFORT_COMPILER_ROOT_DIR}" STREQUAL "")
