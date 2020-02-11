@@ -74,10 +74,12 @@ message(STATUS "MKL_DIR: ${MKL_DIR}")
 
 #-------------------------------------------------------------------------------
 # Find the MKL_INCLUDE_DIR by finding known header files that MUST be present
-set(MKL_INCLUDE_SEARCH_DIRS
-    /opt/intel/mkl/include
-    /opt/intel/cmkl/include
-)
+if(NOT WIN32)
+    set(MKL_INCLUDE_SEARCH_DIRS
+        /opt/intel/mkl/include
+        /opt/intel/cmkl/include
+    )
+endif()
 if(NOT "$ENV{MKLDIR}" STREQUAL "")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} $ENV{MKLDIR}/include)
 endif()
@@ -86,19 +88,19 @@ if(NOT "${IFORT_COMPILER_ROOT_DIR}" STREQUAL "")
 endif()
 if(NOT "${MKL_DIR}" STREQUAL "")
     set(MKL_ROOT_DIR ${MKL_DIR})
-    message(STATUS "Adding MKL_DIR Path to MKL_INCLUDE_SEARCH_DIRS")
+    # message(STATUS "Adding MKL_DIR Path to MKL_INCLUDE_SEARCH_DIRS")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} "${MKL_DIR}/include")
 endif()
-message(STATUS "MKL_INCLUDE_SEARCH_DIRS: ${MKL_INCLUDE_SEARCH_DIRS}") 
+# message(STATUS "MKL_INCLUDE_SEARCH_DIRS: ${MKL_INCLUDE_SEARCH_DIRS}") 
 
 #-------------------------------------------------------------------------------
 # Find the C/C++ header version of MKL
 find_path(MKL_INCLUDE_DIR 
-        NAMES mkl.fi
+        NAMES mkl_cblas.h
         PATHS ${MKL_INCLUDE_SEARCH_DIRS}
 )
 if(NOT MKL_INCLUDE_DIR)
-    message(FATAL_ERROR "mkl.fi was not found. Is the C/C++ version of MKL installed? Looked in:\n   ${MKL_INCLUDE_SEARCH_DIRS} ")
+    message(FATAL_ERROR "mkl_cblas.h was not found. Is the C/C++ version of MKL installed? Looked in:\n   ${MKL_INCLUDE_SEARCH_DIRS} ")
 endif()
 message(STATUS "MKL_INCLUDE_DIR: ${MKL_INCLUDE_DIR}")
 
@@ -121,7 +123,7 @@ endif()
 # message(STATUS "MKL_INCLUDE_SEARCH_DIRS: ${MKL_INCLUDE_SEARCH_DIRS}")      
 
 find_path(FFTW3_INCLUDE_DIR 
-        NAMES fftw3.f03
+        NAMES fftw3.h
         PATHS ${MKL_INCLUDE_SEARCH_DIRS}
         )
 message(STATUS "FFTW3_INCLUDE_DIR: ${FFTW3_INCLUDE_DIR}")
