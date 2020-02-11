@@ -26,7 +26,7 @@ set(MKL_Link_Types Static Dynamic Single)
 
 set(MKL_InterfaceLayers 64)
 if(NOT APPLE)
-    set(MKL_InterfaceLayers 64 32 )
+set(MKL_InterfaceLayers 64 32 )
 endif()
 
 set(MKL_ThreadingLayers OpenMP TBB Sequential)
@@ -56,9 +56,9 @@ if(NOT MKL_F95Interface)
     message(STATUS "MKL: Optional BLAS95 and/or LAPACK95 interfaces are not set. None, Either or Both are allowed.")
 endif()
 
-message(STATUS "CMAKE_Fortran_COMPILER: ${CMAKE_Fortran_COMPILER}")
+
 #-------------------------------------------------------------------------------
-# We only support Intel Visual Fortran 2019 and newer since those have a sane
+# We only support Intel Visual Fortran 2016 and newer since those have a sane
 # folder structure scheme. These next lines make sense on Windows Intel installs,
 # let's hope that their installations on Linux and macOS are about the same
 if(NOT "${CMAKE_Fortran_COMPILER}" STREQUAL "")
@@ -69,17 +69,13 @@ if(NOT "${CMAKE_Fortran_COMPILER}" STREQUAL "")
     endif()
 endif()
 
-message(STATUS "IFORT_COMPILER_ROOT_DIR: ${IFORT_COMPILER_ROOT_DIR}")
-message(STATUS "MKL_DIR: ${MKL_DIR}")
 
 #-------------------------------------------------------------------------------
 # Find the MKL_INCLUDE_DIR by finding known header files that MUST be present
-if(NOT WIN32)
-    set(MKL_INCLUDE_SEARCH_DIRS
-        /opt/intel/mkl/include
-        /opt/intel/cmkl/include
-    )
-endif()
+set(MKL_INCLUDE_SEARCH_DIRS
+    /opt/intel/mkl/include
+    /opt/intel/cmkl/include
+)
 if(NOT "$ENV{MKLDIR}" STREQUAL "")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} $ENV{MKLDIR}/include)
 endif()
@@ -87,8 +83,6 @@ if(NOT "${IFORT_COMPILER_ROOT_DIR}" STREQUAL "")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} "${IFORT_COMPILER_ROOT_DIR}/mkl/include")
 endif()
 if(NOT "${MKL_DIR}" STREQUAL "")
-    set(MKL_ROOT_DIR ${MKL_DIR})
-    # message(STATUS "Adding MKL_DIR Path to MKL_INCLUDE_SEARCH_DIRS")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} "${MKL_DIR}/include")
 endif()
 # message(STATUS "MKL_INCLUDE_SEARCH_DIRS: ${MKL_INCLUDE_SEARCH_DIRS}") 
@@ -96,20 +90,23 @@ endif()
 #-------------------------------------------------------------------------------
 # Find the C/C++ header version of MKL
 find_path(MKL_INCLUDE_DIR 
-        NAMES mkl_cblas.h
+        NAMES mkl.h
         PATHS ${MKL_INCLUDE_SEARCH_DIRS}
 )
 if(NOT MKL_INCLUDE_DIR)
-    message(FATAL_ERROR "mkl_cblas.h was not found. Is the C/C++ version of MKL installed? Looked in:\n   ${MKL_INCLUDE_SEARCH_DIRS} ")
+    message(FATAL_ERROR "mklfih was not found. Is the C/C++ version of MKL installed? Looked in:\n   ${MKL_INCLUDE_SEARCH_DIRS} ")
 endif()
-message(STATUS "MKL_INCLUDE_DIR: ${MKL_INCLUDE_DIR}")
+
 
 #-------------------------------------------------------------------------------
 # Find the FFTW3_INCLUDE_DIR by finding known header files that MUST be present
-set(MKL_INCLUDE_SEARCH_DIRS
-    /opt/intel/mkl/include/fftw
-    /opt/intel/cmkl/include/fftw
-)
+set(MKL_INCLUDE_SEARCH_DIRS "")
+if(NOT WIN32)
+    set(MKL_INCLUDE_SEARCH_DIRS
+        /opt/intel/mkl/include/fftw
+        /opt/intel/cmkl/include/fftw
+    )
+endif()
 if(NOT "$ENV{MKLDIR}" STREQUAL "")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} $ENV{MKLDIR}/include/fftw)
 endif()
@@ -117,7 +114,6 @@ if(NOT "${IFORT_COMPILER_ROOT_DIR}" STREQUAL "")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} "${IFORT_COMPILER_ROOT_DIR}/mkl/include/fftw")
 endif()
 if(NOT "${MKL_DIR}" STREQUAL "")
-    message(STATUS "Finding FFTW Include Diretory. Adding MKL_DIR Path to MKL_INCLUDE_SEARCH_DIRS")
     set(MKL_INCLUDE_SEARCH_DIRS ${MKL_INCLUDE_SEARCH_DIRS} "${MKL_DIR}/include/fftw")
 endif()
 # message(STATUS "MKL_INCLUDE_SEARCH_DIRS: ${MKL_INCLUDE_SEARCH_DIRS}")      
@@ -126,7 +122,7 @@ find_path(FFTW3_INCLUDE_DIR
         NAMES fftw3.h
         PATHS ${MKL_INCLUDE_SEARCH_DIRS}
         )
-message(STATUS "FFTW3_INCLUDE_DIR: ${FFTW3_INCLUDE_DIR}")
+# message(STATUS "FFTW3_INCLUDE_DIR: ${FFTW3_INCLUDE_DIR}")
 
 
 #-------------------------------------------------------------------------------
@@ -140,26 +136,16 @@ endif()
 if(NOT "${IFORT_COMPILER_ROOT_DIR}" STREQUAL "")
     if(NOT APPLE)
         get_filename_component(IFORT_COMPILER_ROOT_DIR ${IFORT_COMPILER_ROOT_DIR} DIRECTORY)
-        set(MKL_LIB_DIRS 
-            "${MKL_LIB_DIRS}"
-            "${IFORT_COMPILER_ROOT_DIR}/lib"  # MacOS and Linux(?)
-            "${IFORT_COMPILER_ROOT_DIR}/redist/${MKL_ARCH_DIR}/compiler" # Windows
-        )
     endif()
 endif()
-# iomp5 libraries are stored with the compiler
-if (UNIX)
-    set(MKL_LIB_DIRS
-        ${MKL_LIB_DIRS} 
-        ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}  # Linux 
-        ${MKL_ROOT_DIR}/../lib                  # MacOS
-    )
-    find_library(MKL_IOMP5_LIBRARY iomp5 
-        PATHS ${MKL_LIB_DIRS}
-    )
-endif()
+set(MKL_LIB_DIRS 
+    "${MKL_LIB_DIRS}"
+    "${IFORT_COMPILER_ROOT_DIR}/lib"  # MacOS and Linux(?)
+    "${IFORT_COMPILER_ROOT_DIR}/redist/${MKL_ARCH_DIR}/compiler" # Windows
+)
 
-message(STATUS "MKL_LIB_DIRS: ${MKL_LIB_DIRS}")
+
+#message(STATUS "MKL_LIB_DIRS: ${MKL_LIB_DIRS}")
 
 
 #-------------------------------------------------------------------------------
@@ -270,52 +256,7 @@ if(CMAKE_FIND_DEBUG_MODE )
         message(STATUS "    ${lib}")
     endforeach(lib ${MKL_LIBRARIES})
 endif()
-
-
-
-set(MKL_LIBRARY_LOCATIONS ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR} ${MKL_ROOT_DIR}/lib)
-
-find_library(MKL_CORE_LIBRARY mkl_core PATHS ${MKL_LIBRARY_LOCATIONS})
-
-# Threading libraries
-find_library(MKL_RT_LIBRARY mkl_rt PATHS ${MKL_LIBRARY_LOCATIONS})
-find_library(MKL_SEQUENTIAL_LIBRARY mkl_sequential PATHS ${MKL_LIBRARY_LOCATIONS})
-find_library(MKL_TBBTHREAD_LIBRARY mkl_intel_thread PATHS ${MKL_LIBRARY_LOCATIONS})
-find_library(MKL_GNUTHREAD_LIBRARY mkl_gnu_thread PATHS ${MKL_LIBRARY_LOCATIONS})
-
-# Intel Libraries
-if (NOT "${MKL_ARCH_DIR}" STREQUAL "ia32")
-    set(INTEL_LP_SUFFIX  "_lp64")
-    set(INTEL_ILP_SUFFIX "_ilp64")
-endif()
-
-find_library(MKL_LP_LIBRARY mkl_intel%{INTEL_LP_SUFFIX} PATHS ${MKL_LIBRARY_LOCATIONS})
-find_library(MKL_ILP_LIBRARY mkl_intel${INTEL_ILP_SUFFIX} PATHS ${MKL_LIBRARY_LOCATIONS})
-
-# Lapack
-find_library(MKL_LAPACK_LIBRARY mkl_lapack PATHS ${MKL_LIBRARY_LOCATIONS})
-
-if (NOT MKL_LAPACK_LIBRARY)
-    find_library(MKL_LAPACK_LIBRARY mkl_lapack95_lp64 PATHS ${MKL_LIBRARY_LOCATIONS})
-endif()
-
-
-foreach (MODEVAR ${MKL_MODE_VARIANTS})
-    foreach (THREADVAR ${MKL_THREAD_VARIANTS})
-        if (MKL_CORE_LIBRARY AND MKL_${MODEVAR}_LIBRARY AND MKL_${THREADVAR}_LIBRARY)
-            set(MKL_${MODEVAR}_${THREADVAR}_LIBRARIES
-                ${MKL_${MODEVAR}_LIBRARY} ${MKL_${THREADVAR}_LIBRARY} ${MKL_CORE_LIBRARY}
-                ${MKL_LAPACK_LIBRARY} ${MKL_IOMP5_LIBRARY})
-            message("${MODEVAR} ${THREADVAR} ${MKL_${MODEVAR}_${THREADVAR}_LIBRARIES}") # for debug
-        endif()
-    endforeach()
-endforeach()
-
-set(MKL_LIBRARIES ${MKL_RT_LIBRARY})
-mark_as_advanced(MKL_CORE_LIBRARY MKL_LP_LIBRARY MKL_ILP_LIBRARY
-    MKL_SEQUENTIAL_LIBRARY MKL_TBBTHREAD_LIBRARY MKL_GNUTHREAD_LIBRARY)
-
-        
+   
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MKL DEFAULT_MSG MKL_INCLUDE_DIR MKL_LIBRARIES MKL_LIB_DIRS)
