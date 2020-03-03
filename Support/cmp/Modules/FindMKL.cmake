@@ -67,8 +67,42 @@ if(NOT "${CMAKE_Fortran_COMPILER}" STREQUAL "")
     if(WIN32)
         get_filename_component(IFORT_COMPILER_ROOT_DIR ${IFORT_COMPILER_ROOT_DIR} DIRECTORY)
     endif()
+else()
+    # So now we need to get where intel *might* have put the compilers when we do not have a fortran compiler
+
 endif()
 
+#--------------------------------------------------------------------------------------------------
+# APPLE Case of MKL downloaded and installed from the Intel website. There are differences
+# between just installing MKL by itself and installing it as part of an Intel compiler
+# package such as IFORT or ICC
+if(APPLE)
+  set(MKL_IS_INSTALLED 0)
+  # Let's look around to see if any other Intel Products have been installed on the system
+  message(STATUS "|-- FindMKL.cmake Looking for MKL on macOS System.... ")
+  message(STATUS "|-- Searching for previous Intel MKL Installations... ")
+  if(EXISTS "/opt/intel")
+    message(STATUS "|-- Found Previous Intel Installation at /opt/intel")
+    if(EXISTS "/opt/intel/.pset/db/intel_sdp_products.tgz.db")
+        message(STATUS "|-- Reading install log '/opt/intel/.pset/db/intel_sdp_products.tgz.db' ")
+        file(STRINGS "/opt/intel/.pset/db/intel_sdp_products.tgz.db" intel_install_log)
+        list(LENGTH intel_install_log install_log_length)
+        message(STATUS "|-- ${install_log_length} entries in install log. Using the first one to extract install location.")
+        list(GET intel_install_log 0 install_line)
+        string(REPLACE "|" ";" install_line ${install_line})
+        list(GET install_line 3 MKL_INSTALL_LOCATION)
+        # Intel likes to end the path with a "/" but that will mess up some other things so get rid of it
+        string(REGEX REPLACE "[/]$" "" MKL_INSTALL_LOCATION ${MKL_INSTALL_LOCATION})
+
+        message(STATUS "|-- MKL_INSTALL_LOCATION: ${MKL_INSTALL_LOCATION}")
+        # Now generate some library search paths
+        set(IFORT_COMPILER_ROOT_DIR
+            ${MKL_INSTALL_LOCATION}/compilers_and_libraries/mac
+        )
+        set(MKL_IS_INSTALLED 1)
+    endif()
+  endif()
+endif()
 
 #-------------------------------------------------------------------------------
 # Find the MKL_INCLUDE_DIR by finding known header files that MUST be present
@@ -140,12 +174,12 @@ if(NOT "${IFORT_COMPILER_ROOT_DIR}" STREQUAL "")
 endif()
 set(MKL_LIB_DIRS 
     "${MKL_LIB_DIRS}"
-    "${IFORT_COMPILER_ROOT_DIR}/lib"  # MacOS and Linux(?)
+    "${IFORT_COMPILER_ROOT_DIR}/lib"  # MacOS and Linux(?) assuming Intel Fortran Compiler is installed.
     "${IFORT_COMPILER_ROOT_DIR}/redist/${MKL_ARCH_DIR}/compiler" # Windows
 )
 
 
-#message(STATUS "MKL_LIB_DIRS: ${MKL_LIB_DIRS}")
+message(STATUS "MKL_LIB_DIRS: ${MKL_LIB_DIRS}")
 
 
 #-------------------------------------------------------------------------------
